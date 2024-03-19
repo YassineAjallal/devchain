@@ -80,7 +80,7 @@
           const { message } = await requestMessage(account, chain);
           const signature = await signer.signMessage(message);
           const data = await verifyMessage(message, signature);
-          console.log(data)
+          document.body.innerHTML = `<h1>you logged as ${data.address}</h1>`
           
         };
     
