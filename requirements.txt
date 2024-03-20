@@ -4,3 +4,4 @@ python-dotenv
 moralis
 django-cors-headers
 brownie
+web3

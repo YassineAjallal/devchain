@@ -1,5 +1,6 @@
 import json
 import os
+from web3 import Web3
 from django.views import View
 from .froms import CreateArticleForm
 from django.http import HttpResponse, JsonResponse
@@ -9,7 +10,7 @@ from dotenv import load_dotenv
 from moralis import auth
 
 load_dotenv()
-API_KEY = os.getenv('WEB3_API_KEY')
+API_KEY = os.getenv('API_KEY')
 
 class Authenticate(View):
     def get(self, request):
@@ -39,8 +40,19 @@ class CreateArticle(View):
             return redirect('home')
         return redirect('create article')
     
-    def addArticleToBlockchain(self, address, title, content): 
+    def addArticleToBlockchain(self, address, title, content):
         print(address, title, content)
+        with open('/home/yassine/Desktop/devchain/blockchain/build/contracts/Articles.json', 'r') as article_abi:
+            web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+            abi = json.load(article_abi)['abi']
+            ARTICLES_CONTRACT_ADDRESS = os.getenv('ARTICLES_CONTRACT_ADDRESS')
+            article = web3.eth.contract(address=ARTICLES_CONTRACT_ADDRESS, abi=abi)
+
+            tx_hash = article.functions.addArticle(title, content, 1000).transact({'from': address})
+            web3.eth.wait_for_transaction_receipt(tx_hash)
+
+            all_articles = article.functions.getArticles().call()
+            print(all_articles)
 
 
 class Request(View):

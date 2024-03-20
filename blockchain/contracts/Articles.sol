@@ -16,6 +16,9 @@ contract Articles
         articles[msg.sender].push(article);
     }
 
+    function getArticles() public view returns (Infos[] memory) {
+        return  articles[msg.sender];
+    }
 
 }
 
