@@ -1,15 +1,12 @@
 import json
-import requests
 import os
+from django.views import View
+from .froms import CreateArticleForm
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views import View
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from dotenv import load_dotenv
 from moralis import auth
-from django.views.generic import RedirectView
 
 load_dotenv()
 API_KEY = os.getenv('WEB3_API_KEY')
@@ -29,6 +26,22 @@ class Home(View):
         else:
             return redirect('authenticate')
             
+
+class CreateArticle(View):
+    def get(self, request):
+        create_article = CreateArticleForm()
+        return render(request, 'create.html', {'create_form': create_article})
+
+    def post(self, request):
+        create_article = CreateArticleForm(request.POST)
+        if create_article.is_valid():
+            self.addArticleToBlockchain(request.COOKIES['address'], create_article.data['title'], create_article.data['content'])
+            return redirect('home')
+        return redirect('create article')
+    
+    def addArticleToBlockchain(self, address, title, content): 
+        print(address, title, content)
+
 
 class Request(View):
     def post(self, request):
