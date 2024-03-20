@@ -3,3 +3,4 @@ requests
 python-dotenv
 moralis
 django-cors-headers
+brownie

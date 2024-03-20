@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Authenticate</title>
+</head>
+<body>
+
+    <div>
+        <button class="btn" id="auth-metamask"><img src="{% static 'assets/metamask.svg' %}" alt=""> Authenticate with Metamask</button>
+    </div>
+    {{ csrf_token|stringformat:"s"|json_script:"csrf_token" }}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    <script src="{% static 'js/authenticate.js' %}"></script>
+</body>
+</html>
