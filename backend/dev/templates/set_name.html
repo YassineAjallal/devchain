@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Name</title>
 </head>
 <body>
-    {% include "navbar.html" %}
-    {% if articles %}
-        
-    {% else %}
-        <h1>no articles available</h1>
-    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>

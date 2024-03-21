@@ -1,0 +1,33 @@
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#auth-metamask {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 15px;
+    background-color: #f0b90b;
+    color: #414141;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 800;
+}
+
+#auth-metamask:hover {
+    background-color: #d99e0b;
+}
+
+#auth-metamask img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+
+/* 0715538718 */

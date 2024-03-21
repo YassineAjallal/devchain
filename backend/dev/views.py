@@ -2,29 +2,61 @@ import json
 import os
 from web3 import Web3
 from django.views import View
-from .froms import CreateArticleForm
+from .froms import CreateArticleForm, SetNameForm
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from dotenv import load_dotenv
-from moralis import auth, evm_api
+from moralis import auth
 
-home = os.getenv('HOME')
-load_dotenv(f'{home}/Desktop/devchain/.env')
+HOME = os.getenv('HOME')
+load_dotenv(f'{HOME}/Desktop/devchain/.env')
 API_KEY = os.getenv('API_KEY')
+ARTICLES_CONTRACT_ADDRESS = os.getenv('ARTICLES_CONTRACT_ADDRESS')
+
+with open(f'{HOME}/Desktop/devchain/blockchain/build/contracts/Articles.json', 'r') as article_abi:
+    web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+    abi = json.load(article_abi)['abi']
+    article = web3.eth.contract(address=ARTICLES_CONTRACT_ADDRESS, abi=abi)
+
 
 class Authenticate(View):
     def get(self, request):
         if 'address' in request.COOKIES:
-            return redirect('home')
+            encoded_address = web3.to_checksum_address(request.COOKIES['address'])
+            user_name = article.functions.getUserName(encoded_address).call()
+            if (len(user_name) == 0):
+                return redirect('set name')
+            response = redirect('home')
+            response.set_cookie('name', user_name)
+            return response
         return render(request, 'authenticate.html')
 
+
+class SetName(View):
+    def get(self, request):
+        if 'address' in request.COOKIES:
+            form = SetNameForm()
+            return render(request, 'set_name.html', {'form': form})
+
+    def post(self, request):
+        form = SetNameForm(request.POST)
+        if form.is_valid() and 'address':
+            if 'address' in request.COOKIES:
+                tx_hash = article.functions.addUserName(form.data['name']).transact({'from': request.COOKIES['address']})
+                web3.eth.wait_for_transaction_receipt(tx_hash)
+                response = redirect('home')
+                response.set_cookie('name', form.data['name'])
+                return response
+            return redirect('authenticate')
+        return redirect('set name')
 
 
 class Home(View):
     def get(self, request):
         if 'address' in request.COOKIES:
-            return render(request, 'home.html', {"address": request.COOKIES['address']})
+            all_articles = article.functions.getAllArticles().call()
+            print(all_articles)
+            return render(request, 'home.html', {"name": request.COOKIES['name'], "articles": all_articles})
         else:
             return redirect('authenticate')
             
@@ -42,20 +74,13 @@ class CreateArticle(View):
         return redirect('create article')
     
     def addArticleToBlockchain(self, address, title, content):
-        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
-        with open(f'{home}/Desktop/devchain/blockchain/build/contracts/Articles.json', 'r') as article_abi:
-            web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
-            abi = json.load(article_abi)['abi']
-            ARTICLES_CONTRACT_ADDRESS = os.getenv('ARTICLES_CONTRACT_ADDRESS')
-            article = web3.eth.contract(address=ARTICLES_CONTRACT_ADDRESS, abi=abi)
-
-            tx_hash = article.functions.addArticle(title, content, 1000).transact({'from': address})
-            web3.eth.wait_for_transaction_receipt(tx_hash)
-            encoded_address = web3.to_checksum_address(address)
-            user_articles = article.functions.getArticles(encoded_address).call()
-            all_articles = article.functions.getAllArticles().call()
-            print(user_articles)
-            print(all_articles)
+        tx_hash = article.functions.addArticle(title, content, 1000).transact({'from': address})
+        web3.eth.wait_for_transaction_receipt(tx_hash)
+        encoded_address = web3.to_checksum_address(address)
+        user_articles = article.functions.getArticles(encoded_address).call()
+        all_articles = article.functions.getAllArticles().call()
+        print(user_articles)
+        print(all_articles)
 
 
 class Request(View):
