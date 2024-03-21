@@ -7,9 +7,10 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from dotenv import load_dotenv
-from moralis import auth
+from moralis import auth, evm_api
 
-load_dotenv()
+home = os.getenv('HOME')
+load_dotenv(f'{home}/Desktop/devchain/.env')
 API_KEY = os.getenv('API_KEY')
 
 class Authenticate(View):
@@ -23,6 +24,7 @@ class Authenticate(View):
 class Home(View):
     def get(self, request):
         if 'address' in request.COOKIES:
+            
             return render(request, 'home.html')
         else:
             return redirect('authenticate')
@@ -41,8 +43,8 @@ class CreateArticle(View):
         return redirect('create article')
     
     def addArticleToBlockchain(self, address, title, content):
-        print(address, title, content)
-        with open('/home/yassine/Desktop/devchain/blockchain/build/contracts/Articles.json', 'r') as article_abi:
+        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
+        with open(f'{home}/Desktop/devchain/blockchain/build/contracts/Articles.json', 'r') as article_abi:
             web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545'))
             abi = json.load(article_abi)['abi']
             ARTICLES_CONTRACT_ADDRESS = os.getenv('ARTICLES_CONTRACT_ADDRESS')
@@ -50,8 +52,10 @@ class CreateArticle(View):
 
             tx_hash = article.functions.addArticle(title, content, 1000).transact({'from': address})
             web3.eth.wait_for_transaction_receipt(tx_hash)
-
-            all_articles = article.functions.getArticles().call()
+            encoded_address = web3.to_checksum_address(address)
+            user_articles = article.functions.getArticles(encoded_address).call()
+            all_articles = article.functions.getAllArticles().call()
+            print(user_articles)
             print(all_articles)
 
 
