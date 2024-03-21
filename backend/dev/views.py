@@ -24,8 +24,7 @@ class Authenticate(View):
 class Home(View):
     def get(self, request):
         if 'address' in request.COOKIES:
-            
-            return render(request, 'home.html')
+            return render(request, 'home.html', {"address": request.COOKIES['address']})
         else:
             return redirect('authenticate')
             

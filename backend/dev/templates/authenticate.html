@@ -9,9 +9,8 @@
     <title>Authenticate</title>
 </head>
 <body>
-
+    <button class="btn" id="auth-metamask"><img src="{% static 'assets/metamask.svg' %}" alt="">Login</button>
     <div>
-        <button class="btn" id="auth-metamask"><img src="{% static 'assets/metamask.svg' %}" alt=""> Authenticate with Metamask</button>
     </div>
     {{ csrf_token|stringformat:"s"|json_script:"csrf_token" }}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
