@@ -1,14 +1,27 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
     <title>Document</title>
 </head>
 <body>
     {% include "navbar.html" %}
     {% if articles %}
-        
+        {% for article in articles %}
+            <div class="container">
+                <article class="article-box">
+                    <h2 class="article-title">{{ article.1 }}</h2>
+                    <p class="article-content">{{ article.2 }}</p>
+                    <div class="article-meta">
+                    <span class="author">By: {{ article.0 }}</span>
+                    <span class="created-date"> - Created: {{ article.3|date:"D d M Y" }}</span>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
     {% else %}
         <h1>no articles available</h1>
     {% endif %}

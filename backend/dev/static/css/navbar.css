@@ -1,15 +1,19 @@
 body {
+    box-sizing: border-box;
     font-family: sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #212529;
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem 2rem;
-    background-color: #f2f2f2;
+    background-color: #1A1E22;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 40px;
 }
 
 .container {
@@ -18,15 +22,14 @@ body {
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .logo {
     font-size: 1.2rem;
+    color: #d99e0b;
+    /* Main accent color */
+    text-decoration: none;
     font-weight: bold;
-    color: #333;
 }
 
 .nav-list {
@@ -42,11 +45,45 @@ body {
 
 .nav-list a {
     text-decoration: none;
-    color: #333;
+    color: #ddd;
     font-size: 1rem;
     transition: color 0.3s ease;
 }
 
 .nav-list a:hover {
-    color: #007bff;
+    color: #d99e0b;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.username {
+    margin-right: 10px;
+    color: #ddd;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.logout-btn {
+    width: 100px;
+    height: 40px;
+    background-color: #d99e0b;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    margin-left: 10px;
+    /*color: #414141;
+    */color: white;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background-color: #b68b1d;
 }

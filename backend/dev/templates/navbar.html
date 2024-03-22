@@ -7,16 +7,21 @@
 <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="container">
+  <div style="background-color: #1A1E22;">
+    <nav class="navbar container">
         <a href="#" class="logo">DevChain</a>
         <ul class="nav-list">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'create' %}">Articles</a></li>
             <li><a href="{% url 'create' %}">Create</a></li>
         </ul>
-        <div>{{ name }}</div>
-    </div>
-  </nav>
+        <div class="user-info">
+          <span class="username">{{ name }}</span>
+          <button type="button" class="logout-btn">Logout</button>
+        </div>
+      </nav>
+  </div>
+
+
 </body>
 </html>

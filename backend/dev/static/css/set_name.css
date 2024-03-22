@@ -1,0 +1,64 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #212529;
+    color: #fff;
+}
+
+/* .login-form {
+    background-color: #1A1E22;
+    border-radius: 5px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+} */
+
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444;
+    /* Darker border for input field */
+    border-radius: 3px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    background-color: #212529;
+    /* Match background color */
+    color: #fff;
+    /* Light text color for input */
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #d99e0b;
+    /* Main accent color on focus */
+}
+
+button[type="submit"] {
+    background-color: #d99e0b;
+    /* Main accent color for button */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #c18700;
+    /* Darker shade of main color on hover */
+}

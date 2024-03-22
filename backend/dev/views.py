@@ -1,5 +1,6 @@
 import json
 import os
+import datetime
 from web3 import Web3
 from django.views import View
 from .froms import CreateArticleForm, SetNameForm
@@ -37,15 +38,16 @@ class SetName(View):
         if 'address' in request.COOKIES:
             form = SetNameForm()
             return render(request, 'set_name.html', {'form': form})
+        return redirect('authenticate')
 
     def post(self, request):
         form = SetNameForm(request.POST)
         if form.is_valid() and 'address':
             if 'address' in request.COOKIES:
-                tx_hash = article.functions.addUserName(form.data['name']).transact({'from': request.COOKIES['address']})
+                tx_hash = article.functions.addUserName(form.data['your_name']).transact({'from': request.COOKIES['address']})
                 web3.eth.wait_for_transaction_receipt(tx_hash)
                 response = redirect('home')
-                response.set_cookie('name', form.data['name'])
+                response.set_cookie('name', form.data['your_name'])
                 return response
             return redirect('authenticate')
         return redirect('set name')
@@ -63,8 +65,10 @@ class Home(View):
 
 class CreateArticle(View):
     def get(self, request):
-        create_article = CreateArticleForm()
-        return render(request, 'create.html', {'create_form': create_article})
+        if 'address' in request.COOKIES:
+            create_article = CreateArticleForm()
+            return render(request, 'create.html', {'create_form': create_article, "name": request.COOKIES['name']})
+        return redirect('authenticate')
 
     def post(self, request):
         create_article = CreateArticleForm(request.POST)
@@ -74,7 +78,9 @@ class CreateArticle(View):
         return redirect('create article')
     
     def addArticleToBlockchain(self, address, title, content):
-        tx_hash = article.functions.addArticle(title, content, 1000).transact({'from': address})
+        ct = datetime.datetime.now()
+
+        tx_hash = article.functions.addArticle(title, content, int(ct.timestamp())).transact({'from': address})
         web3.eth.wait_for_transaction_receipt(tx_hash)
         encoded_address = web3.to_checksum_address(address)
         user_articles = article.functions.getArticles(encoded_address).call()
