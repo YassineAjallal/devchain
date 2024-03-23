@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <title>Home</title>
+</head>
+<body>
+    {% include "navbar.html" %}
+    {% if articles %}
+        <div class="container" style="margin-top: 20px;">
+        {% for article in articles %}
+                <a href="{% url 'article details' id=article.0 %}">
+                    <article class="article-box">
+                        <h2 class="article-title">{{ article.3 }}</h2>
+                        <p class="article-content">{{ article.4 }}</p>
+                        <div class="article-meta">
+                            <span class="author">By: {{ article.2 }}</span>
+                            <span class="created-date"> - Created: {{ article.5|date:"D d M Y" }}</span>
+                        </div>
+                        <div class="btns">
+                            <button class="update-btn">Update</button>
+                            <button class="delete-btn">Delete</button>
+                        </div>
+                    </article>
+                </a>
+        {% endfor %}
+        </div>
+    {% else %}
+        <h1 class="no-article">no articles available</h1>
+    {% endif %}
+</body>
+</html>

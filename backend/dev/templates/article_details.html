@@ -17,6 +17,12 @@
         <span class="created-date"> - {{ article.5 }}</span>
       </div>
       <p class="article-content">{{ article.4 }}</p>
+      {% if article.1 == address %}   
+        <div class="btns">
+          <button class="update-btn">Update</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      {% endif %}
     </article>
   </main>
 </body>

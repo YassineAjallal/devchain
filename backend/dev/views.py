@@ -22,20 +22,19 @@ with open(f'{HOME}/Desktop/devchain/blockchain/build/contracts/Articles.json', '
 
 class Authenticate(View):
     def get(self, request):
-        if 'address' in request.COOKIES:
-            encoded_address = web3.to_checksum_address(request.COOKIES['address'])
+        if 'address' in request.session:
+            encoded_address = web3.to_checksum_address(request.session["address"])
             user_name = article.functions.getUserName(encoded_address).call()
             if (len(user_name) == 0):
                 return redirect('set name')
-            response = redirect('home')
-            response.set_cookie('name', user_name)
-            return response
+            request.session['name'] = user_name
+            return redirect('home')
         return render(request, 'authenticate.html')
 
 
 class SetName(View):
     def get(self, request):
-        if 'address' in request.COOKIES:
+        if 'address' in request.session:
             form = SetNameForm()
             return render(request, 'set_name.html', {'form': form})
         return redirect('authenticate')
@@ -43,36 +42,44 @@ class SetName(View):
     def post(self, request):
         form = SetNameForm(request.POST)
         if form.is_valid() and 'address':
-            if 'address' in request.COOKIES:
-                tx_hash = article.functions.addUserName(form.data['your_name']).transact({'from': request.COOKIES['address']})
+            if 'address' in request.session:
+                tx_hash = article.functions.addUserName(form.data['your_name']).transact({'from': request.session["address"]})
                 web3.eth.wait_for_transaction_receipt(tx_hash)
-                response = redirect('home')
-                response.set_cookie('name', form.data['your_name'])
-                return response
+                request.session['name'] =  form.data['your_name']
+                return redirect('home')
             return redirect('authenticate')
         return redirect('set name')
 
 
 class Home(View):
     def get(self, request):
-        if 'address' in request.COOKIES:
+        if 'address' in request.session:
             all_articles = article.functions.getAllArticles().call()
-            return render(request, 'home.html', {"name": request.COOKIES['name'], "articles": all_articles})
+            return render(request, 'home.html', {"name": request.session['name'], 'address': request.session['address'],"articles": all_articles})
         else:
             return redirect('authenticate')
           
 
+class ListUserArticles(View):
+    def get(self, request):
+        if 'address' in request.session:
+            encoded_address = web3.to_checksum_address(request.session['address'])
+            user_articles = article.functions.getArticles(encoded_address).call()
+            return render(request, 'user_articles.html', {'articles': user_articles, 'name': request.session['name']})
+        return redirect('authenticate')
+    
+
 class CreateArticle(View):
     def get(self, request):
-        if 'address' in request.COOKIES:
+        if 'address' in request.session:
             create_article = CreateArticleForm()
-            return render(request, 'create.html', {'create_form': create_article, "name": request.COOKIES['name']})
+            return render(request, 'create.html', {'create_form': create_article, "name": request.session['name']})
         return redirect('authenticate')
 
     def post(self, request):
         create_article = CreateArticleForm(request.POST)
         if create_article.is_valid():
-            self.addArticleToBlockchain(request.COOKIES['address'], create_article.data['title'], create_article.data['content'])
+            self.addArticleToBlockchain(request.session["address"], create_article.data['title'], create_article.data['content'])
             return redirect('home')
         print(create_article.errors)
         return redirect('create')
@@ -85,13 +92,17 @@ class CreateArticle(View):
 
 class ArticleDetails(View):
     def get(self, request, *args, **kwargs):
-        found_article = article.functions.getArticleById(kwargs['id']).call()
-        if found_article[0]:
-            return render(request, 'article_details.html', {'article': found_article[1]})
-        return render(request, '404.html')
+        if 'address' in request.session:
+            found_article = article.functions.getArticleById(kwargs['id']).call()
+            if found_article[0]:
+                return render(request, 'article_details.html', {'article': found_article[1], 'name': request.session['name'], 'address': request.session['address']})
+            return render(request, '404.html')
+        return redirect('authenticate')
 
 
 class Request(View):
+    def get(self, request):
+        return redirect('home')
     def post(self, request):
         data = json.loads(request.body)
         body = {
@@ -112,6 +123,8 @@ class Request(View):
 
  
 class Verify(View):
+    def get(self, request):
+        return redirect('home')
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         
@@ -124,6 +137,5 @@ class Verify(View):
             api_key=API_KEY,
             body=body
         )
-        response = HttpResponse(result)
-        response.set_cookie("address", result['address'])
-        return response
+        request.session["address"] = result['address']
+        return HttpResponse(result)

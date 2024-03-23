@@ -9,10 +9,10 @@
 <body>
   <div style="background-color: #1A1E22;">
     <nav class="navbar container">
-        <a href="#" class="logo">DevChain</a>
+        <a href="{% url 'home' %}" class="logo">DevChain</a>
         <ul class="nav-list">
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'create' %}">Articles</a></li>
+            <li><a href="{% url 'user articles' %}">Articles</a></li>
             <li><a href="{% url 'create' %}">Create</a></li>
         </ul>
         <div class="user-info">
