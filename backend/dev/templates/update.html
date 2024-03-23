@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/create.css' %}">
+    <title>update article</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <form action="" method="post" class="create_form">
+            {% csrf_token %}
+            {{ update_form }}
+            <input type="hidden" name="article_id" value="{{id}}">
+            <button type="submit">update</button>
+        </form>
+    </div>
+</body>
+</html>

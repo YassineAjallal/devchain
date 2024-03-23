@@ -111,6 +111,21 @@ class ArticleDetails(View):
         return redirect('authenticate')
 
 
+class UpdateArticle(View):
+    article_id : str
+    def get(self, request, *args, **kwargs):
+        if 'address' in request.session:
+            update_form = CreateArticleForm()
+            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': update_form })
+        return redirect('authenticate')
+    def post(self, request):
+        if 'address' in request.session:
+            update_form = CreateArticleForm(request.POST)
+            if update_form.is_valid():
+                
+
+        return redirect('authenticate')
+
 class Request(View):
     def get(self, request):
         return redirect('home')
@@ -150,3 +165,6 @@ class Verify(View):
         )
         request.session["address"] = result['address']
         return HttpResponse(result)
+    
+
+# handle form errors

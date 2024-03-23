@@ -16,10 +16,10 @@ contract Articles
     mapping(address => string) usersNames;
     mapping(address => Infos[]) articles;
 
-    function isExist(address useraddress) private view returns (bool) {
+    function isExist(address _useraddress) private view returns (bool) {
         for (uint i = 0; i < users.length; i++)
         {
-            if (users[i] == useraddress)
+            if (users[i] == _useraddress)
                 return true;
         }
         return false;
@@ -33,12 +33,25 @@ contract Articles
         return usersNames[_userAddress];
     }
 
-    function addArticle(string memory title, string memory content, uint256 timestamp) public {
-        Infos memory article = Infos(articleNextId, msg.sender ,usersNames[msg.sender], title, content, timestamp);
+    function addArticle(string memory _title, string memory _content, uint256 _timestamp) public {
+        Infos memory article = Infos(articleNextId, msg.sender ,usersNames[msg.sender], _title, _content, _timestamp);
         ++articleNextId;
         if (!isExist(msg.sender))
             users.push(msg.sender);
         articles[msg.sender].push(article);
+    }
+
+    function updateArticle(uint256 _id,string memory _title, string memory _content) public {
+        for (uint i = 0; i < users.length; i++)
+        {
+            for (uint j = 0; j < articles[users[i]].length; j++)
+            {
+                if (articles[users[i]][j].id == _id) {
+                    articles[users[i]][j].title = _title;
+                    articles[users[i]][j].content = _content;
+                }
+            }
+        } 
     }
 
     function getArticleById(uint256 _id) public view returns (bool, Infos memory) {
@@ -50,8 +63,8 @@ contract Articles
         return (false, EmptyInfos);
     }
 
-    function getArticles(address userAddress) public view returns (Infos[] memory) {
-        return  articles[userAddress];
+    function getArticles(address _userAddress) public view returns (Infos[] memory) {
+        return  articles[_userAddress];
     }
 
     function articlesCount() private view returns (uint256) {
