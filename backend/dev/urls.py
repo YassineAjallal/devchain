@@ -7,6 +7,7 @@ urlpatterns = [
     path('authenticate', views.Authenticate.as_view(), name='authenticate'),
     path('set_name', views.SetName.as_view(), name='set name'),
     path('create', views.CreateArticle.as_view(), name='create'),
+    path('article/<int:id>', views.ArticleDetails.as_view(), name='article details'),
     path('request', views.Request.as_view(), name='request'),
     path('verify', views.Verify.as_view(), name='verify'),
 ]

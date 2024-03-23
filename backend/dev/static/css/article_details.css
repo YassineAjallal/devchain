@@ -1,0 +1,46 @@
+main {
+    height: calc(100vh - 2rem - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.article-details {
+    width: 100%;
+    background-color: #1A1E22;  /* Match form background color */
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #fff;
+  }
+  
+  .article-title {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #ddd;  /* Light gray for meta info */
+    margin-bottom: 10px;
+  }
+  
+  .author,
+  .created-date {
+    margin-right: 10px;
+  }
+  
+  .article-image {
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 5px;  /* Optional rounded corners for image */
+  }
+  
+  .article-content {
+    line-height: 1.5;
+  }
+  

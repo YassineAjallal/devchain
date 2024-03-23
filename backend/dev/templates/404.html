@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Page Not Found</title>
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+</head>
+<body>
+  <main>
+    <div class="error-page">
+      <h1>Oops! Page Not Found</h1>
+      <p>We can't seem to find the page you're looking for.</p>
+      <a href="{% url 'home' %}" class="go-back-btn">Go Back</a>
+    </div>
+  </main>
+</body>
+</html>

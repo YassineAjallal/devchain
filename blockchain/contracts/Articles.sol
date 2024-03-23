@@ -4,11 +4,14 @@ pragma solidity 0.8.19;
 contract Articles
 {
     struct Infos {
-        string author;
-        string title;
-        string content;
+        uint256 id;
+        address author_address;
+        string  author;
+        string  title;
+        string  content;
         uint256 timestamp;
     }
+    uint256 articleNextId = 0;
     address[] users;
     mapping(address => string) usersNames;
     mapping(address => Infos[]) articles;
@@ -31,10 +34,20 @@ contract Articles
     }
 
     function addArticle(string memory title, string memory content, uint256 timestamp) public {
-        Infos memory article = Infos(usersNames[msg.sender], title, content, timestamp);
+        Infos memory article = Infos(articleNextId, msg.sender ,usersNames[msg.sender], title, content, timestamp);
+        ++articleNextId;
         if (!isExist(msg.sender))
             users.push(msg.sender);
         articles[msg.sender].push(article);
+    }
+
+    function getArticleById(uint256 _id) public view returns (bool, Infos memory) {
+        Infos memory EmptyInfos = Infos(0, address(0), '', '', '', 0);
+        for (uint i = 0; i < users.length; i++)
+            for (uint j = 0; j < articles[users[i]].length; j++)
+                if (articles[users[i]][j].id == _id)
+                    return (true, articles[users[i]][j]);
+        return (false, EmptyInfos);
     }
 
     function getArticles(address userAddress) public view returns (Infos[] memory) {

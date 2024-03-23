@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Details</title>
+<link rel="stylesheet" href="{% static 'css/article_details.css'%}">
+</head>
+<body>
+  {% include 'navbar.html' %}
+  <main class="container" style="margin-top: 20px;">
+    <article class="article-details">
+      <h2>{{ article.3 }}</h2>
+      <div class="article-meta">
+        <span class="author">{{ article.2 }}</span>
+        <span class="created-date"> - {{ article.5 }}</span>
+      </div>
+      <p class="article-content">{{ article.4 }}</p>
+    </article>
+  </main>
+</body>
+</html>

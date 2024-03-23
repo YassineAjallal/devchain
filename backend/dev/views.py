@@ -57,11 +57,10 @@ class Home(View):
     def get(self, request):
         if 'address' in request.COOKIES:
             all_articles = article.functions.getAllArticles().call()
-            print(all_articles)
             return render(request, 'home.html', {"name": request.COOKIES['name'], "articles": all_articles})
         else:
             return redirect('authenticate')
-            
+          
 
 class CreateArticle(View):
     def get(self, request):
@@ -75,32 +74,35 @@ class CreateArticle(View):
         if create_article.is_valid():
             self.addArticleToBlockchain(request.COOKIES['address'], create_article.data['title'], create_article.data['content'])
             return redirect('home')
-        return redirect('create article')
+        print(create_article.errors)
+        return redirect('create')
     
     def addArticleToBlockchain(self, address, title, content):
         ct = datetime.datetime.now()
-
         tx_hash = article.functions.addArticle(title, content, int(ct.timestamp())).transact({'from': address})
         web3.eth.wait_for_transaction_receipt(tx_hash)
-        encoded_address = web3.to_checksum_address(address)
-        user_articles = article.functions.getArticles(encoded_address).call()
-        all_articles = article.functions.getAllArticles().call()
-        print(user_articles)
-        print(all_articles)
+
+
+class ArticleDetails(View):
+    def get(self, request, *args, **kwargs):
+        found_article = article.functions.getArticleById(kwargs['id']).call()
+        if found_article[0]:
+            return render(request, 'article_details.html', {'article': found_article[1]})
+        return render(request, '404.html')
 
 
 class Request(View):
     def post(self, request):
         data = json.loads(request.body)
         body = {
-        "domain": "127.0.0.1",
-        "chainId": '1337',
-        "address": data['address'],
-        "statement": "Please confirm",
-        "uri": "http://127.0.0.1:8545/",
-        "expirationTime": "2025-01-01T00:00:00.000Z",
-        "notBefore": "2020-01-01T00:00:00.000Z",
-        "timeout": 15
+            "domain": "127.0.0.1",
+            "chainId": '1337',
+            "address": data['address'],
+            "statement": "Please confirm",
+            "uri": "http://127.0.0.1:8545/",
+            "expirationTime": "2025-01-01T00:00:00.000Z",
+            "notBefore": "2020-01-01T00:00:00.000Z",
+            "timeout": 15
         }
         result = auth.challenge.request_challenge_evm(
             api_key=API_KEY,
