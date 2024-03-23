@@ -118,12 +118,19 @@ class UpdateArticle(View):
             update_form = CreateArticleForm()
             return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': update_form })
         return redirect('authenticate')
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if 'address' in request.session:
             update_form = CreateArticleForm(request.POST)
             if update_form.is_valid():
-                
-
+                encoded_address = web3.to_checksum_address(request.session['address'])
+                article_location = article.functions.getArticleIndex(encoded_address, int(request.POST['article_id'])).call()
+                print(article_location)
+                if article_location[0]:
+                    tx_hash = article.functions.updateArticle(article_location[1], update_form.data['title'], update_form.data['content']).transact({'from': request.session['address']})
+                    web3.eth.wait_for_transaction_receipt(tx_hash)
+                    return redirect('home')
+                return render(request, '404.html')
+            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': CreateArticleForm() }) 
         return redirect('authenticate')
 
 class Request(View):
@@ -165,6 +172,9 @@ class Verify(View):
         )
         request.session["address"] = result['address']
         return HttpResponse(result)
-    
+
 
 # handle form errors
+# style no articles
+# home articles update remove
+# timestamp fix

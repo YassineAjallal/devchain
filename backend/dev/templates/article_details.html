@@ -19,7 +19,7 @@
       <p class="article-content">{{ article.4 }}</p>
       {% if article.1 == address %}   
         <div class="btns">
-          <button class="update-btn">Update</button>
+          <a href="{% url 'update' id=article.0 %}"><button class="update-btn">Update</button></a>
           <button class="delete-btn">Delete</button>
         </div>
       {% endif %}

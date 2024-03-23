@@ -41,17 +41,9 @@ contract Articles
         articles[msg.sender].push(article);
     }
 
-    function updateArticle(uint256 _id,string memory _title, string memory _content) public {
-        for (uint i = 0; i < users.length; i++)
-        {
-            for (uint j = 0; j < articles[users[i]].length; j++)
-            {
-                if (articles[users[i]][j].id == _id) {
-                    articles[users[i]][j].title = _title;
-                    articles[users[i]][j].content = _content;
-                }
-            }
-        } 
+    function updateArticle(uint256 index ,string memory _title, string memory _content) public {
+        articles[msg.sender][index].title = _title;
+        articles[msg.sender][index].content = _content;
     }
 
     function getArticleById(uint256 _id) public view returns (bool, Infos memory) {
@@ -63,6 +55,13 @@ contract Articles
         return (false, EmptyInfos);
     }
 
+    function getArticleIndex(address _userAddress, uint _id) public view returns (bool, uint256) {
+        for (uint i = 0; i < articles[_userAddress].length; i++)
+            if (articles[_userAddress][i].id == _id)
+                return (true, i);
+        return (false, 0);
+    }
+    
     function getArticles(address _userAddress) public view returns (Infos[] memory) {
         return  articles[_userAddress];
     }

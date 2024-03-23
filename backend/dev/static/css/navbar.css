@@ -9,6 +9,10 @@ body {
 a  {
     text-decoration: none;
 }
+
+a:visited {
+    color: #ddd;
+}
 .navbar {
     display: flex;
     justify-content: space-between;
