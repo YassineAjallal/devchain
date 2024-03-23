@@ -60,6 +60,17 @@ class Home(View):
             return redirect('authenticate')
           
 
+class Logout(View):
+    def get(self, request):
+        return redirect('home')
+
+    def post(self, request):
+        if 'logout' in request.POST:
+            del request.session['name']
+            del request.session['address']
+        return redirect('home')
+
+
 class ListUserArticles(View):
     def get(self, request):
         if 'address' in request.session:
