@@ -1,6 +1,7 @@
 import json
 import os
 import datetime
+import time
 from web3 import Web3
 from django.views import View
 from .froms import CreateArticleForm, SetNameForm
@@ -55,7 +56,14 @@ class Home(View):
     def get(self, request):
         if 'address' in request.session:
             all_articles = article.functions.getAllArticles().call()
-            return render(request, 'home.html', {"name": request.session['name'], 'address': request.session['address'],"articles": all_articles})
+            formatted_articles = []
+            for art in all_articles:
+                art = list(art)
+                art[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(art[5]))
+                formatted_articles.append(art)
+            for art in formatted_articles:
+                print(art)
+            return render(request, 'home.html', {"name": request.session['name'], 'address': request.session['address'],"articles": formatted_articles})
         else:
             return redirect('authenticate')
           
@@ -105,8 +113,10 @@ class ArticleDetails(View):
     def get(self, request, *args, **kwargs):
         if 'address' in request.session:
             found_article = article.functions.getArticleById(kwargs['id']).call()
+            formatted_article = list(found_article[1])
+            formatted_article[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(formatted_article[5]))
             if found_article[0]:
-                return render(request, 'article_details.html', {'article': found_article[1], 'name': request.session['name'], 'address': request.session['address']})
+                return render(request, 'article_details.html', {'article': formatted_article, 'name': request.session['name'], 'address': request.session['address']})
             return render(request, '404.html')
         return redirect('authenticate')
 
