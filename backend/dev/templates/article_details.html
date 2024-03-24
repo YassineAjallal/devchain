@@ -20,7 +20,11 @@
       {% if article.1 == address %}   
         <div class="btns">
           <a href="{% url 'update' id=article.0 %}"><button class="update-btn">Update</button></a>
-          <button class="delete-btn">Delete</button>
+          <form action="{% url 'delete'%}" method="post">
+            {% csrf_token %}
+            <button class="delete-btn" name="delete">Delete</button>
+            <input type="hidden" name="article_id" value="{{article.0}}">
+          </form>
         </div>
       {% endif %}
     </article>

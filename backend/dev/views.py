@@ -124,7 +124,6 @@ class UpdateArticle(View):
             if update_form.is_valid():
                 encoded_address = web3.to_checksum_address(request.session['address'])
                 article_location = article.functions.getArticleIndex(encoded_address, int(request.POST['article_id'])).call()
-                print(article_location)
                 if article_location[0]:
                     tx_hash = article.functions.updateArticle(article_location[1], update_form.data['title'], update_form.data['content']).transact({'from': request.session['address']})
                     web3.eth.wait_for_transaction_receipt(tx_hash)
@@ -133,6 +132,23 @@ class UpdateArticle(View):
             return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': CreateArticleForm() }) 
         return redirect('authenticate')
 
+
+class DeleteArticle(View):
+    def get(self, request):
+        return redirect('home')
+    def post(self, request):
+        if 'address' in request.session:
+            if 'delete' in request.POST and 'article_id' in request.POST:
+                encoded_address = web3.to_checksum_address(request.session['address'])
+                article_location = article.functions.getArticleIndex(encoded_address, int(request.POST['article_id'])).call()
+                if article_location[0]:
+                    tx_hash = article.functions.deleteArticle(article_location[1]).transact({'from': request.session['address']})
+                    web3.eth.wait_for_transaction_receipt(tx_hash)
+                    return redirect('home')
+                return render(request, '404.html')
+            return redirect('home')
+        return redirect('authenticate')
+        
 class Request(View):
     def get(self, request):
         return redirect('home')

@@ -22,14 +22,21 @@
                         </div>
                         <div class="btns">
                             <a href="{% url 'update' id=article.0 %}"><button class="update-btn">Update</button></a>
-                            <button class="delete-btn">Delete</button>
+                            <form action="{% url 'delete'%}" method="post">
+                                {% csrf_token %}
+                                <button class="delete-btn" name="delete">Delete</button>
+                                <input type="hidden" name="article_id" value="{{article.0}}">
+                            </form>
                         </div>
                     </article>
                 </a>
         {% endfor %}
         </div>
     {% else %}
-        <h1 class="no-article">no articles available</h1>
+        <div class="error-page">
+            <h1>No Articles</h1>
+            <a href="{% url 'create' %}" class="go-back-btn">Create</a>
+        </div>
     {% endif %}
 </body>
 </html>

@@ -41,9 +41,16 @@ contract Articles
         articles[msg.sender].push(article);
     }
 
-    function updateArticle(uint256 index ,string memory _title, string memory _content) public {
-        articles[msg.sender][index].title = _title;
-        articles[msg.sender][index].content = _content;
+    function updateArticle(uint256 _index ,string memory _title, string memory _content) public {
+        articles[msg.sender][_index].title = _title;
+        articles[msg.sender][_index].content = _content;
+    }
+
+    function deleteArticle(uint256 _index) public {
+        uint256 articlesLen = articles[msg.sender].length - 1;
+        articles[msg.sender][_index] = articles[msg.sender][articlesLen];
+        delete articles[msg.sender][articlesLen];
+        articles[msg.sender].pop();
     }
 
     function getArticleById(uint256 _id) public view returns (bool, Infos memory) {

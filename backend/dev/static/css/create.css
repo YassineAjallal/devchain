@@ -33,7 +33,7 @@ textarea:focus {
     border-color: #d99e0b;
 }
 
-button[type="submit"] {
+.create,.update {
     background-color: #d99e0b;
     color: #fff;
     padding: 10px 20px;
@@ -53,6 +53,6 @@ button[type="submit"] {
     -o-border-radius: 5px;
 }
 
-button[type="submit"]:hover {
+.create:hover, .update:hover {
     background-color: #c18700;
 }
