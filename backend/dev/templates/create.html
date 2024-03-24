@@ -11,8 +11,20 @@
     {% include 'navbar.html' %}
     <div class="container">
         <form action="" method="post" class="create_form">
+            <!-- {% if create_form.errors %}
+                <h1>{{create_form.errors}}</h1>
+            {% endif %} -->
             {% csrf_token %}
-            {{ create_form }}
+            <!-- {{ create_form }} -->
+            {% for field in create_form %}
+                <label>{{field.label}}</label>
+                {{field}}
+                {% if field.errors %}    
+                    <div class="form-error">
+                        {{field.errors.as_text}}
+                    </div>
+                {% endif %}
+            {% endfor %}
             <button type="submit" class="create">Create</button>
         </form>
     </div>

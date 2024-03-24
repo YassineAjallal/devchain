@@ -56,3 +56,9 @@ textarea:focus {
 .create:hover, .update:hover {
     background-color: #c18700;
 }
+
+.form-error {
+    color: #dd2140; /* Soft red color */
+    font-size: 15px;
+    margin-top: 20px;
+}

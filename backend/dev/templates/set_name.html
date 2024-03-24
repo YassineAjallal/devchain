@@ -10,7 +10,15 @@
 <body>
     <form action="" method="post">
         {% csrf_token %}
-        {{form}}
+        {% for field in form %}
+            <label>{{field.label}} : </label>
+            {{field}}
+            {% if field.errors %}    
+                <div class="form-error">
+                    {{field.errors.as_text}}
+                </div>
+            {% endif %}
+        {% endfor %}
         <button type="submit">Submit</button>
     </form>
 </body>

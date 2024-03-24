@@ -42,28 +42,28 @@ class SetName(View):
 
     def post(self, request):
         form = SetNameForm(request.POST)
-        if form.is_valid() and 'address':
+        if form.is_valid():
             if 'address' in request.session:
                 tx_hash = article.functions.addUserName(form.data['your_name']).transact({'from': request.session["address"]})
                 web3.eth.wait_for_transaction_receipt(tx_hash)
                 request.session['name'] =  form.data['your_name']
                 return redirect('home')
             return redirect('authenticate')
-        return redirect('set name')
+        return render(request, 'set_name.html', {'form': form})
 
 
 class Home(View):
     def get(self, request):
         if 'address' in request.session:
             all_articles = article.functions.getAllArticles().call()
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
             formatted_articles = []
             for art in all_articles:
                 art = list(art)
                 art[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(art[5]))
                 formatted_articles.append(art)
-            for art in formatted_articles:
-                print(art)
-            return render(request, 'home.html', {"name": request.session['name'], 'address': request.session['address'],"articles": formatted_articles})
+            return render(request, 'home.html', {"name": request.session['name'], 'balance': balance, 'address': request.session['address'],"articles": formatted_articles})
         else:
             return redirect('authenticate')
           
@@ -82,26 +82,32 @@ class Logout(View):
 class ListUserArticles(View):
     def get(self, request):
         if 'address' in request.session:
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
             encoded_address = web3.to_checksum_address(request.session['address'])
             user_articles = article.functions.getArticles(encoded_address).call()
-            return render(request, 'user_articles.html', {'articles': user_articles, 'name': request.session['name']})
+            return render(request, 'user_articles.html', {'articles': user_articles, 'name': request.session['name'], 'balance': balance})
         return redirect('authenticate')
     
 
 class CreateArticle(View):
     def get(self, request):
         if 'address' in request.session:
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
             create_article = CreateArticleForm()
-            return render(request, 'create.html', {'create_form': create_article, "name": request.session['name']})
+            return render(request, 'create.html', {'create_form': create_article, "name": request.session['name'], 'balance': balance})
         return redirect('authenticate')
 
     def post(self, request):
         create_article = CreateArticleForm(request.POST)
+        balance = web3.eth.get_balance(request.session['address'])
+        balance = web3.from_wei(balance, 'ether')
         if create_article.is_valid():
             self.addArticleToBlockchain(request.session["address"], create_article.data['title'], create_article.data['content'])
             return redirect('home')
-        print(create_article.errors)
-        return redirect('create')
+        print(create_article.errors.as_text())
+        return render(request, 'create.html', {'create_form': create_article, "name": request.session['name'], 'balance': balance})
     
     def addArticleToBlockchain(self, address, title, content):
         ct = datetime.datetime.now()
@@ -112,11 +118,13 @@ class CreateArticle(View):
 class ArticleDetails(View):
     def get(self, request, *args, **kwargs):
         if 'address' in request.session:
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
             found_article = article.functions.getArticleById(kwargs['id']).call()
             formatted_article = list(found_article[1])
             formatted_article[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(formatted_article[5]))
             if found_article[0]:
-                return render(request, 'article_details.html', {'article': formatted_article, 'name': request.session['name'], 'address': request.session['address']})
+                return render(request, 'article_details.html', {'article': formatted_article, 'name': request.session['name'], 'address': request.session['address'], 'balance': balance})
             return render(request, '404.html')
         return redirect('authenticate')
 
@@ -126,11 +134,15 @@ class UpdateArticle(View):
     def get(self, request, *args, **kwargs):
         if 'address' in request.session:
             update_form = CreateArticleForm()
-            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': update_form })
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
+            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': update_form, 'name': request.session['name'], 'balance': balance })
         return redirect('authenticate')
     def post(self, request, *args, **kwargs):
         if 'address' in request.session:
             update_form = CreateArticleForm(request.POST)
+            balance = web3.eth.get_balance(request.session['address'])
+            balance = web3.from_wei(balance, 'ether')
             if update_form.is_valid():
                 encoded_address = web3.to_checksum_address(request.session['address'])
                 article_location = article.functions.getArticleIndex(encoded_address, int(request.POST['article_id'])).call()
@@ -139,7 +151,7 @@ class UpdateArticle(View):
                     web3.eth.wait_for_transaction_receipt(tx_hash)
                     return redirect('home')
                 return render(request, '404.html')
-            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': CreateArticleForm() }) 
+            return render(request, 'update.html', {'article_id': kwargs['id'], 'update_form': update_form, 'name': request.session['name'], 'balance': balance }) 
         return redirect('authenticate')
 
 
@@ -201,6 +213,3 @@ class Verify(View):
 
 
 # handle form errors
-# style no articles
-# home articles update remove
-# timestamp fix
