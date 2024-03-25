@@ -57,6 +57,7 @@ DevChain is a decentralized application (DApp) for blogging, built with Django f
     cd backend
     python manage.py runserver
     ```
+10. Access the application via your web browser at [http://localhost:8000](http://localhost:8000).
 
 ## Usage
 1. Register an account or log in if you already have one.
