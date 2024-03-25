@@ -18,6 +18,7 @@ DevChain is a decentralized application (DApp) for blogging, built with Django f
 
 ## Prerequisites
 - Install MetaMask extension in your web browser.
+- Create a `.env` file in the root directory of the project
 
 ## Installation
 1. Clone this repository in your Desktop:
