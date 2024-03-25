@@ -58,12 +58,7 @@ class Home(View):
             all_articles = article.functions.getAllArticles().call()
             balance = web3.eth.get_balance(request.session['address'])
             balance = web3.from_wei(balance, 'ether')
-            formatted_articles = []
-            for art in all_articles:
-                art = list(art)
-                art[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(art[5]))
-                formatted_articles.append(art)
-            return render(request, 'home.html', {"name": request.session['name'], 'balance': balance, 'address': request.session['address'],"articles": formatted_articles})
+            return render(request, 'home.html', {"name": request.session['name'], 'balance': balance, 'address': request.session['address'],"articles": all_articles})
         else:
             return redirect('authenticate')
           
@@ -111,7 +106,7 @@ class CreateArticle(View):
     
     def addArticleToBlockchain(self, address, title, content):
         ct = datetime.datetime.now()
-        tx_hash = article.functions.addArticle(title, content, int(ct.timestamp())).transact({'from': address})
+        tx_hash = article.functions.addArticle(title, content, time.strftime('%d/%m/%Y %H:%M', time.gmtime(ct.timestamp()))).transact({'from': address})
         web3.eth.wait_for_transaction_receipt(tx_hash)
 
 
@@ -121,10 +116,8 @@ class ArticleDetails(View):
             balance = web3.eth.get_balance(request.session['address'])
             balance = web3.from_wei(balance, 'ether')
             found_article = article.functions.getArticleById(kwargs['id']).call()
-            formatted_article = list(found_article[1])
-            formatted_article[5] = time.strftime('%d/%m/%Y %H:%M', time.gmtime(formatted_article[5]))
             if found_article[0]:
-                return render(request, 'article_details.html', {'article': formatted_article, 'name': request.session['name'], 'address': request.session['address'], 'balance': balance})
+                return render(request, 'article_details.html', {'article': found_article[1], 'name': request.session['name'], 'address': request.session['address'], 'balance': balance})
             return render(request, '404.html')
         return redirect('authenticate')
 
@@ -170,7 +163,8 @@ class DeleteArticle(View):
                 return render(request, '404.html')
             return redirect('home')
         return redirect('authenticate')
-        
+
+     
 class Request(View):
     def get(self, request):
         return redirect('home')
@@ -192,7 +186,7 @@ class Request(View):
         )
         return JsonResponse(result)
 
- 
+
 class Verify(View):
     def get(self, request):
         return redirect('home')
@@ -210,6 +204,3 @@ class Verify(View):
         )
         request.session["address"] = result['address']
         return HttpResponse(result)
-
-
-# handle form errors

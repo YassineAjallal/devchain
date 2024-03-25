@@ -9,7 +9,7 @@ contract Articles
         string  author;
         string  title;
         string  content;
-        uint256 timestamp;
+        string created;
     }
     uint256 articleNextId = 0;
     address[] users;
@@ -33,8 +33,8 @@ contract Articles
         return usersNames[_userAddress];
     }
 
-    function addArticle(string memory _title, string memory _content, uint256 _timestamp) public {
-        Infos memory article = Infos(articleNextId, msg.sender ,usersNames[msg.sender], _title, _content, _timestamp);
+    function addArticle(string memory _title, string memory _content, string memory _created) public {
+        Infos memory article = Infos(articleNextId, msg.sender ,usersNames[msg.sender], _title, _content, _created);
         ++articleNextId;
         if (!isExist(msg.sender))
             users.push(msg.sender);
@@ -54,7 +54,7 @@ contract Articles
     }
 
     function getArticleById(uint256 _id) public view returns (bool, Infos memory) {
-        Infos memory EmptyInfos = Infos(0, address(0), '', '', '', 0);
+        Infos memory EmptyInfos = Infos(0, address(0), '', '', '', '');
         for (uint i = 0; i < users.length; i++)
             for (uint j = 0; j < articles[users[i]].length; j++)
                 if (articles[users[i]][j].id == _id)
