@@ -65,8 +65,5 @@ DevChain is a decentralized application (DApp) for blogging, built with Django f
 3. Interact with the Ethereum blockchain to store and retrieve blog post data.
 4. Experiment with local blockchain deployment and testing using Ganache and Brownie.
 
-## Contributing
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
 ## Acknowledgements
 Thanks to the Django, Solidity, Web3.py, Brownie, and Ganache communities for providing excellent frameworks and tools for building decentralized applications.
